@@ -5,6 +5,46 @@ namespace TestRail.Enums
     /// <summary>Command actions available.</summary>
     public enum CommandAction
     {
+        /// <summary>Used to access an individual attachment.</summary>
+        [Description("attachment")]
+        Attachment,
+
+        /// <summary>Used to attach a file to a plan.</summary>
+        [Description("attachment_to_plan")]
+        AttachmentToPlan,
+
+        /// <summary>Used to attach a file to a plan entry.</summary>
+        [Description("attachment_to_plan_entry")]
+        AttachmentToPlanEntry,
+
+        /// <summary>Used to attach a file to a result.</summary>
+        [Description("attachment_to_result")]
+        AttachmentToResult,
+
+        /// <summary>Used to attach a file to a run.</summary>
+        [Description("attachment_to_run")]
+        AttachmentToRun,
+
+        /// <summary>Used to access a list of attachments for a test case.</summary>
+        [Description("attachments_for_case")]
+        AttachmentsForCase,
+
+        /// <summary>Used to access a list of attachments for a test plan.</summary>
+        [Description("attachments_for_plan")]
+        AttachmentsForPlan,
+
+        /// <summary>Used to access a list of attachments for a test entry.</summary>
+        [Description("attachments_for_plan_entry")]
+        AttachmentsForPlanEntry,
+
+        /// <summary>Used to access a list of attachments for a test run.</summary>
+        [Description("attachments_for_run")]
+        AttachmentsForRun,
+
+        /// <summary>Used to access a list of attachments for a test's result.</summary>
+        [Description("attachments_for_test")]
+        AttachmentsForTest,
+
         /// <summary>Used to access an individual case.</summary>
         [Description("case")]
         Case,
