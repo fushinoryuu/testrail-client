@@ -399,6 +399,26 @@ namespace TestRail
 
             return _SendPostCommand<Milestone>(uri, milestone.GetJson());
         }
+
+        public RequestResult<object> AddAttachmentToPlan()
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult<object> AddAttachmentToPlanEntry()
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult<object> AddAttachmentToResult()
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult<object> AddAttachmentToRun()
+        {
+            throw new NotImplementedException();
+        }
         #endregion Add Commands
 
         #region Update Commands
@@ -732,6 +752,11 @@ namespace TestRail
 
             return _SendPostCommand<Result>(uri);
         }
+
+        public RequestResult<object> DeleteAttachment()
+        {
+            throw new NotImplementedException();
+        }
         #endregion Delete Commands
 
         #region Get Commands
@@ -1056,6 +1081,36 @@ namespace TestRail
             var uri = _CreateUri_(CommandType.Get, CommandAction.Configs, projectId);
 
             return _SendGetCommand<IList<ConfigurationGroup>>(uri);
+        }
+
+        public RequestResult<object> GetAttachmentsForCase()
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult<object> GetAttachmentsForPlan()
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult<object> GetAttachmentsForPlanEntry()
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult<object> GetAttachmentsForRun()
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult<object> GetAttachmentsForTest()
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult<object> GetAttachment()
+        {
+            throw new NotImplementedException();
         }
         #endregion Get Commands
         #endregion Public Methods
