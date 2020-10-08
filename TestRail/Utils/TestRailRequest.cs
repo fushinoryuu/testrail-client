@@ -46,7 +46,17 @@ namespace TestRail.Utils
         /// <param name="contentType">set the type, ex: 'application/json'</param>
         public void ContentType(ContentType contentType)
         {
-            _request.ContentType = contentType.GetStringValue();
+            switch (contentType)
+            {
+                case Enums.ContentType.Json:
+                    _request.ContentType = contentType.GetStringValue();
+                    break;
+                case Enums.ContentType.Multipart:
+                    _request.ContentType = $"{contentType.GetStringValue()}; boundary={_CreateFormDataBoundary()}";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);
+            }
         }
 
         /// <summary>add a body to the request</summary>
@@ -81,6 +91,11 @@ namespace TestRail.Utils
 
                 return new RequestResult<T>(response.StatusCode, responseFromServer);
             }
+        }
+
+        private static string _CreateFormDataBoundary()
+        {
+            return $"---------------------------{DateTime.Now.Ticks:x}";
         }
     }
 }
