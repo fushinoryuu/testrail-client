@@ -1173,7 +1173,7 @@ namespace TestRail
         {
             try
             {
-                return _CallEndpoint<T>(uri, type, filePath != null ? "multipart/form-data" : "application/json", jsonParams);
+                return _CallEndpoint<T>(uri, type, filePath != null ? ContentType.Multipart : ContentType.Json, jsonParams);
             }
 
             // If there is an error, will try to create a new result object
@@ -1215,7 +1215,7 @@ namespace TestRail
         /// <param name="type">The type of request to build: GEt, POST, etc.</param>
         /// <param name="json">Parameters to send formatted as a single JSON object.</param>
         /// <returns>Result of the call.</returns>
-        private RequestResult<T> _CallEndpoint<T>(string uri, RequestType type, string contentType, JObject json = null, string filePath = null)
+        private RequestResult<T> _CallEndpoint<T>(string uri, RequestType type, ContentType contentType, JObject json = null, string filePath = null)
         {
             // Build full uri
             uri = BaseUrl + uri;

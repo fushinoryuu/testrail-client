@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using TestRail.Enums;
 
 namespace TestRail.Utils
 {
@@ -43,9 +44,9 @@ namespace TestRail.Utils
 
         /// <summary>what type of data the request contains</summary>
         /// <param name="contentType">set the type, ex: 'application/json'</param>
-        public void ContentType(string contentType)
+        public void ContentType(ContentType contentType)
         {
-            _request.ContentType = contentType;
+            _request.ContentType = contentType.GetStringValue();
         }
 
         /// <summary>add a body to the request</summary>
