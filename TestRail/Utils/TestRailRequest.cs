@@ -62,6 +62,11 @@ namespace TestRail.Utils
             requestDataStream.Close();
         }
 
+        public void AttachFile(string filePath)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>send the request and get a response</summary>
         /// <typeparam name="T">the type to deserialize to</typeparam>
         /// <returns>if successful, will return a new RequestResult object</returns>

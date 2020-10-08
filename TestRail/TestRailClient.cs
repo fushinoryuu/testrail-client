@@ -400,9 +400,11 @@ namespace TestRail
             return _SendPostCommand<Milestone>(uri, milestone.GetJson());
         }
 
-        public RequestResult<object> AddAttachmentToPlan()
+        public RequestResult<Attachment> AddAttachmentToPlan(ulong planId, string filePath)
         {
-            throw new NotImplementedException();
+            var uri = _CreateUri_(CommandType.Add, CommandAction.AttachmentToPlan, planId);
+
+            return _SendUploadImageCommand<Attachment>(uri, filePath);
         }
 
         public RequestResult<object> AddAttachmentToPlanEntry()
@@ -1156,17 +1158,22 @@ namespace TestRail
             return _SendCommand<T>(uri, RequestType.Get);
         }
 
+        private RequestResult<T> _SendUploadImageCommand<T>(string uri, string filePath)
+        {
+            return _SendCommand<T>(uri, RequestType.Post, filePath: filePath);
+        }
+
         /// <summary>Used to build a request.</summary>
         /// <typeparam name="T">The type to deserialize the response to.</typeparam>
         /// <param name="uri">The endpoint to send the request to.</param>
         /// <param name="type">The type of request.</param>
         /// <param name="jsonParams">JSON object to include in the request.</param>
         /// <returns>The result of the request.</returns>
-        private RequestResult<T> _SendCommand<T>(string uri, RequestType type, JObject jsonParams = null)
+        private RequestResult<T> _SendCommand<T>(string uri, RequestType type, JObject jsonParams = null, string filePath = null)
         {
             try
             {
-                return _CallEndpoint<T>(uri, type, jsonParams);
+                return _CallEndpoint<T>(uri, type, filePath != null ? "multipart/form-data" : "application/json", jsonParams);
             }
 
             // If there is an error, will try to create a new result object
@@ -1208,7 +1215,7 @@ namespace TestRail
         /// <param name="type">The type of request to build: GEt, POST, etc.</param>
         /// <param name="json">Parameters to send formatted as a single JSON object.</param>
         /// <returns>Result of the call.</returns>
-        private RequestResult<T> _CallEndpoint<T>(string uri, RequestType type, JObject json = null)
+        private RequestResult<T> _CallEndpoint<T>(string uri, RequestType type, string contentType, JObject json = null, string filePath = null)
         {
             // Build full uri
             uri = BaseUrl + uri;
@@ -1218,12 +1225,18 @@ namespace TestRail
 
             request.AddHeaders(new Dictionary<string, string> { { "Authorization", AuthInfo } });
             request.Accepts("application/json");
-            request.ContentType("application/json");
+            request.ContentType(contentType);
 
             // Add body
             if (json != null)
             {
                 request.AddBody(json.ToString());
+            }
+
+            // Add file
+            if (filePath != null)
+            {
+                request.AttachFile(filePath);
             }
 
             // Send request and return response
