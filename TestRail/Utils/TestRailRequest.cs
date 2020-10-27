@@ -15,6 +15,7 @@ namespace TestRail.Utils
         private readonly HttpWebRequest _request;
         private string _boundary;
         private byte[] _boundaryBytes;
+        private byte[] _endBoundaryBytes;
 
         /// <summary>constructor</summary>
         /// <param name="url">url for the request</param>
@@ -54,7 +55,8 @@ namespace TestRail.Utils
                     _request.ContentType = contentType.GetStringValue();
                     break;
                 case Enums.ContentType.Multipart:
-                    _request.ContentType = $"{contentType.GetStringValue()}; boundary={_GetFormDataBoundary()}";
+                    _SetFormDataBoundary();
+                    _request.ContentType = $"{contentType.GetStringValue()}; boundary={_boundary}";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);
@@ -77,7 +79,32 @@ namespace TestRail.Utils
 
         public void AttachFile(string filePath)
         {
-            throw new NotImplementedException();
+            _SetBoundaryBytes();
+
+            var requestStream = _request.GetRequestStream();
+
+            const string headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\n" +
+                                          "Content-Type: application/octet-stream\r\n\r\n";
+
+            requestStream.Write(_boundaryBytes, 0, _boundaryBytes.Length);
+
+            var header = string.Format(headerTemplate, Path.GetFileName(filePath), filePath);
+            var headerBytes = Encoding.UTF8.GetBytes(header);
+
+            requestStream.Write(headerBytes, 0, headerBytes.Length);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                var buffer = new byte[1024];
+                var bytesRead = 0;
+                while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+                {
+                    requestStream.Write(buffer, 0, bytesRead);
+                }
+            }
+
+            requestStream.Write(_endBoundaryBytes, 0, _endBoundaryBytes.Length);
+            requestStream.Close();
         }
 
         /// <summary>send the request and get a response</summary>
@@ -95,14 +122,26 @@ namespace TestRail.Utils
             }
         }
 
-        private string _GetFormDataBoundary()
+        private void _SetFormDataBoundary()
         {
-            return _boundary ?? (_boundary = $"---------------------------{DateTime.Now.Ticks:x}");
+            if (_boundary == null)
+            {
+                _boundary = $"---------------------------{DateTime.Now.Ticks:x}";
+            }
         }
 
-        private byte[] _GetBoundaryBytes()
+        private void _SetBoundaryBytes()
         {
-            return _boundaryBytes ?? (_boundaryBytes = Encoding.ASCII.GetBytes("\r\n--" + _boundary + "\r\n"));
+            if (_boundary == null)
+            {
+                _SetFormDataBoundary();
+            }
+
+            if (_boundaryBytes == null || _endBoundaryBytes == null)
+            {
+                _boundaryBytes = Encoding.ASCII.GetBytes("\r\n--" + _boundary + "\r\n");
+                _endBoundaryBytes = Encoding.ASCII.GetBytes("\r\n--" + _boundary + "--");
+            }
         }
     }
 }
