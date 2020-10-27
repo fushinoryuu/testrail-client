@@ -13,6 +13,8 @@ namespace TestRail.Utils
     public class TestRailRequest
     {
         private readonly HttpWebRequest _request;
+        private string _boundary;
+        private byte[] _boundaryBytes;
 
         /// <summary>constructor</summary>
         /// <param name="url">url for the request</param>
@@ -52,7 +54,7 @@ namespace TestRail.Utils
                     _request.ContentType = contentType.GetStringValue();
                     break;
                 case Enums.ContentType.Multipart:
-                    _request.ContentType = $"{contentType.GetStringValue()}; boundary={_CreateFormDataBoundary()}";
+                    _request.ContentType = $"{contentType.GetStringValue()}; boundary={_GetFormDataBoundary()}";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);
@@ -93,9 +95,14 @@ namespace TestRail.Utils
             }
         }
 
-        private static string _CreateFormDataBoundary()
+        private string _GetFormDataBoundary()
         {
-            return $"---------------------------{DateTime.Now.Ticks:x}";
+            return _boundary ?? (_boundary = $"---------------------------{DateTime.Now.Ticks:x}");
+        }
+
+        private byte[] _GetBoundaryBytes()
+        {
+            return _boundaryBytes ?? (_boundaryBytes = Encoding.ASCII.GetBytes("\r\n--" + _boundary + "\r\n"));
         }
     }
 }
