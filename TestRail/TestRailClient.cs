@@ -1173,7 +1173,7 @@ namespace TestRail
         {
             try
             {
-                return _CallEndpoint<T>(uri, type, filePath != null ? ContentType.Multipart : ContentType.Json, jsonParams);
+                return _CallEndpoint<T>(uri, type, filePath != null ? ContentType.Multipart : ContentType.Json, jsonParams, filePath);
             }
 
             // If there is an error, will try to create a new result object
